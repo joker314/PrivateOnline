@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+  "version": "0.1",
+  "name": "Private Online",
+  "description": "See who's online on the Scratch website without being tracked",
+  "background": {
+    "scripts": ["indexer.js", "communication.js"]
+  },
+  "content_scripts": [{
+	"matches": ["https://scratch.mit.edu/*"],
+	"js": ["content.js"]
+  }]
+}
