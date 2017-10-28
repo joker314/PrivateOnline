@@ -9,14 +9,16 @@ const sillyStorage = {
     [`topic-${testTopicID}-page-count`]: 2
   },
 
-  set(appendedData) {
+  set(appendedData, callback) {
     for (const [ key, value ] of Object.entries(appendedData)) {
       this.data[key] = value
     }
+
+    callback()
   },
 
-  get(key) {
-    return this.data[key]
+  get(key, callback) {
+    callback({[key]: this.data[key]})
   },
 
   has(key) {

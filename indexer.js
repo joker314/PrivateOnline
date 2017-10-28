@@ -12,6 +12,14 @@ const scratch = {
   forumPost: id => `https://scratch.mit.edu/discuss/post/${id}`
 }
 
+const promisifyCall = (obj, key, ...args) => {
+  return new Promise(resolve => {
+    obj[key](...args, (data) => {
+      resolve(data)
+    })
+  })
+}
+
 async function index(storage, {
   topicID
 }) {
@@ -20,9 +28,10 @@ async function index(storage, {
   // indexer pass. Note that we don't start at the page AFTER the cached page
   // count; if we did, we'd miss any potential new posts on that page (and
   // we'd get a 404, if a new page doesn't already exist).
-  let currentPage = storage.has(`topic-${topicID}-page-count`)
-    ? storage.get(`topic-${topicID}-page-count`)
-    : 1
+
+  const pageCountKey = `topic-${topicID}-page-count`
+  let currentPage = (await promisifyCall(storage, 'get', pageCountKey))[pageCountKey] || 0
+  console.log('doot', currentPage)
 
   let pageCount = null
 
@@ -68,5 +77,5 @@ async function index(storage, {
     appendedData[`user-${author}`] = postID
   }
   appendedData[`topic-${topicID}-page-count`] = pageCount
-  storage.set(appendedData)
+  await promisifyCall(storage, 'set', appendedData)
 }
