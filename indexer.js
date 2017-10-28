@@ -30,7 +30,9 @@ async function index(storage, {
   // we'd get a 404, if a new page doesn't already exist).
 
   const pageCountKey = `topic-${topicID}-page-count`
-  let currentPage = (await promisifyCall(storage, 'get', pageCountKey))[pageCountKey] || 1
+  const currentPageData = (await promisifyCall(storage, 'get', pageCountKey))
+  let currentPage = currentPageData ? currentPageData[pageCountKey] : 1
+  console.log(currentPage)
 
   let pageCount = null
 

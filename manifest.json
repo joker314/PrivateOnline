@@ -3,6 +3,11 @@
   "version": "0.1",
   "name": "Private Online",
   "description": "See who's online on the Scratch website without being tracked",
+  "applications": {
+    "gecko": {
+      "id": "private-online@example.com"
+    }
+  },
   "background": {
     "scripts": ["constants.js", "indexer.js", "communication.js"]
   },
