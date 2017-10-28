@@ -2,11 +2,11 @@
 // to find out what content.js wants us to do, and then send it a response with
 // sendResponse(...)
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   switch(request.type) {
     case "RUN_INDEXER":
 		index(chrome.storage.sync, {topicID: TOPIC_ID}).then(sendResponse);
-		break;
-  }
-  return true; // This allows us to asynchronously respond
+		console.log("Doing stuff ye boi");
+		return true;
+  } // This allows us to asynchronously respond
 });
