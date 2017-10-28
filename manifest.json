@@ -7,7 +7,7 @@
     "scripts": ["indexer.js", "communication.js"]
   },
   "content_scripts": [{
-	"matches": ["https://scratch.mit.edu/*"],
-	"js": ["content.js"]
+    "matches": ["https://scratch.mit.edu/*"],
+    "js": ["content.js"]
   }]
 }
