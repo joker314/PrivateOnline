@@ -6,7 +6,7 @@ const sillyStorage = {
   data: {
     // Simulate there already being two pages. The indexer won't run through
     // the first page, since it assumes that page hasn't changed.
-    [`po-topic-${testTopicID}-page-count`]: 2
+    [`topic-${testTopicID}-page-count`]: 2
   },
 
   set(appendedData) {

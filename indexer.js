@@ -20,8 +20,8 @@ async function index(storage, {
   // indexer pass. Note that we don't start at the page AFTER the cached page
   // count; if we did, we'd miss any potential new posts on that page (and
   // we'd get a 404, if a new page doesn't already exist).
-  let currentPage = storage.has(`po-topic-${topicID}-page-count`)
-    ? storage.get(`po-topic-${topicID}-page-count`)
+  let currentPage = storage.has(`topic-${topicID}-page-count`)
+    ? storage.get(`topic-${topicID}-page-count`)
     : 1
 
   let pageCount = null
@@ -65,8 +65,8 @@ async function index(storage, {
 
   const appendedData = {}
   for (const [ author, postID ] of Object.entries(indexData)) {
-    appendedData[`po-user-${author}`] = postID
+    appendedData[`user-${author}`] = postID
   }
-  appendedData[`po-topic-${topicID}-page-count`] = pageCount
+  appendedData[`topic-${topicID}-page-count`] = pageCount
   storage.set(appendedData)
 }
