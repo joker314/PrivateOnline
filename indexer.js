@@ -15,15 +15,21 @@ const scratch = {
 async function index(storage, {
   topicID
 }) {
-  // storage.set('po-user-' + username, postID)
-  // storage.set('po-topic-' + topic + '-page-count', pageCount)
-
+  // Start at the cached page count, if one exists. We do this to avoid parsing
+  // (and requesting) all pages on the given forum topic every time we run an
+  // indexer pass. Note that we don't start at the page AFTER the cached page
+  // count; if we did, we'd miss any potential new posts on that page (and
+  // we'd get a 404, if a new page doesn't already exist).
   let currentPage = storage.has(`po-topic-${topicID}-page-count`)
     ? storage.get(`po-topic-${topicID}-page-count`)
     : 1
 
   let pageCount = null
 
+  const indexData = {}
+
+  // We use a do..while here, because we don't know the number of pages on the
+  // topic yet - we only find that out after the first request.
   do {
     const res = await fetch(scratch.forumTopic(topicID, currentPage))
     const html = await res.text()
@@ -41,16 +47,26 @@ async function index(storage, {
 
       const author = post.querySelector('.username').textContent
 
-      console.log(`${author}: ${postID}`)
+      // We only care about the oldest post by any individual author.
+      if (!(author in indexData)) {
+        indexData[author] = postID
+      }
     }
 
-    // If the page count is still undefined, we need to set it.
-    if (pageCount === null) {
-      const pageLinks = doc.body.querySelectorAll('a.page')
-      const lastPage = pageLinks[pageLinks.length - 1]
-      pageCount = lastPage.textContent
-    }
+    // If the page count is still undefined, we need to set it. But we need to
+    // check the page count, anyways, because it might have gotten bigger
+    // since the last indexer pass.
+    const pageLinks = doc.body.querySelectorAll('.page')
+    const lastPage = pageLinks[pageLinks.length - 1]
+    pageCount = lastPage.textContent
 
     currentPage++
   } while (currentPage <= pageCount)
+
+  const appendedData = {}
+  for (const [ author, postID ] of Object.entries(indexData)) {
+    appendedData[`po-user-${author}`] = postID
+  }
+  appendedData[`po-topic-${topicID}-page-count`] = pageCount
+  storage.set(appendedData)
 }

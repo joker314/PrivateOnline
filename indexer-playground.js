@@ -1,10 +1,18 @@
 'use strict'
 
-const sillyStorage = {
-  data: {},
+const testTopicID = 204694
 
-  set(key, value) {
-    this.data[key] = value
+const sillyStorage = {
+  data: {
+    // Simulate there already being two pages. The indexer won't run through
+    // the first page, since it assumes that page hasn't changed.
+    [`po-topic-${testTopicID}-page-count`]: 2
+  },
+
+  set(appendedData) {
+    for (const [ key, value ] of Object.entries(appendedData)) {
+      this.data[key] = value
+    }
   },
 
   get(key) {
@@ -17,5 +25,9 @@ const sillyStorage = {
 }
 
 index(sillyStorage, {
-  topicID: 204694
+  topicID: testTopicID
+}).then(() => {
+  console.log(sillyStorage.data)
+}).catch(err => {
+  console.error(err)
 })
