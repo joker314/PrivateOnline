@@ -35,6 +35,7 @@ async function index(storage, {
       const postIDMatch = postIDHref.match(/post\/([0-9]+)\/$/)
       if (postIDMatch === null) {
         console.warn('Failed to parse post ID:', postIDHref)
+        continue
       }
       const postID = postIDMatch[1]
 
