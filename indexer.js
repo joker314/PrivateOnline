@@ -30,8 +30,7 @@ async function index(storage, {
   // we'd get a 404, if a new page doesn't already exist).
 
   const pageCountKey = `topic-${topicID}-page-count`
-  let currentPage = (await promisifyCall(storage, 'get', pageCountKey))[pageCountKey] || 0
-  console.log('doot', currentPage)
+  let currentPage = (await promisifyCall(storage, 'get', pageCountKey))[pageCountKey] || 1
 
   let pageCount = null
 
@@ -66,8 +65,15 @@ async function index(storage, {
     // check the page count, anyways, because it might have gotten bigger
     // since the last indexer pass.
     const pageLinks = doc.body.querySelectorAll('.page')
-    const lastPage = pageLinks[pageLinks.length - 1]
-    pageCount = lastPage.textContent
+    if (pageLinks.length) {
+      const lastPage = pageLinks[pageLinks.length - 1]
+      pageCount = lastPage.textContent
+    } else {
+      // It's possible that there won't be any .page elements, if there's only
+      // one page in the topic; in that case we simply assume the page count is
+      // one.
+      pageCount = 1
+    }
 
     currentPage++
   } while (currentPage <= pageCount)
